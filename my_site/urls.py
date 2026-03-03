@@ -1,5 +1,5 @@
 """
-URL configuration for my_site project.
+URL configuration for netflix_project project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/6.0/topics/http/urls/
@@ -14,14 +14,23 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
-from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
+from django.conf.urls.i18n import i18n_patterns
+from django.contrib import admin
+from django.urls import path, include
+from rest_framework_simplejwt.views import TokenRefreshView
 
-urlpatterns = [
+urlpatterns = i18n_patterns(
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path("", include("movie_app.urls")),
     path('admin/', admin.site.urls),
-]
+    path('i18n/', include('django.conf.urls.i18n')),
+)
 
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(
+        settings.MEDIA_URL,
+        document_root=settings.MEDIA_ROOT
+    )
+
